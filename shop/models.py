@@ -8,6 +8,8 @@ class Category(models.Model):
     title = models.CharField(max_length=50)
     def __str__(self):
         return self.title
+    class Meta:
+        verbose_name_plural = 'Categories'
 
 class Product(models.Model):
     name = models.CharField(max_length=50)
