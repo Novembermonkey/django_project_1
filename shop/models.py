@@ -39,7 +39,7 @@ class Product(BaseModel):
 class Order(BaseModel):
     name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=50)
-    quantity = models.IntegerField(default=1)
+    quantity = models.PositiveIntegerField(default=1)
     product = models.ForeignKey(Product, related_name="orders", on_delete=models.CASCADE, null = True, blank = True)
 
     def __str__(self):

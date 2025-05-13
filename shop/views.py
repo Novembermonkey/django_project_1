@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import HttpResponse
-from .forms import OrderForm
-from .models import Product, Category, Order
+from django.contrib import messages
+from .forms import OrderForm, ProductForm
+from .models import Product, Category
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -35,20 +37,74 @@ def product_detail(request, product_id):
     except Product.DoesNotExist:
         return HttpResponse('Product Not Found')
 
-def order_detail(request, product_id):
-    product = get_object_or_404(Product, id = product_id)
+def order_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
     form = OrderForm()
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
             order.product = product
-            order.save()
-            return redirect('home')
-        else:
-            return form.errors.as_json()
+
+            if product.amount < order.quantity:
+                messages.add_message( request,
+                                      messages.ERROR,
+                                      "Don't have enough products, please enter lesser amount")
+            elif order.quantity == 0:
+                messages.add_message( request,
+                                      messages.ERROR,
+                                      "Quantity cannot be zero")
+            else:
+                product.amount -= order.quantity
+                product.save()
+                order.save()
+                messages.add_message( request,
+                                      messages.SUCCESS,
+                                      "Order created successfully")
+                return redirect('product_detail', pk)
 
     context = {'product': product,
-               'form': form,
-               }
+               'form': form,}
     return render(request, 'shop/detail.html', context)
+
+
+@login_required
+def create_product(request):
+    form = ProductForm()
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+
+    context = {
+        'form': form
+    }
+    return render(request, 'product/create.html', context)
+
+
+@login_required
+def edit_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    form = ProductForm()
+    if request.method == 'POST':
+        if form.is_valid():
+            form = ProductForm(request.POST)
+            product.name = form.cleaned_data['name'] if form.cleaned_data['name'] else product.name
+            product.price = form.cleaned_data['price'] if form.cleaned_data['price'] else product.price
+            product.description = form.cleaned_data['description'] if form.cleaned_data['description'] else product.description
+            product.quantity = form.cleaned_data['amount'] if form.cleaned_data['amount'] else product.quantity
+            product.image = form.cleaned_data['image'] if form.cleaned_data['image'] else product.image
+            product.save()
+        return redirect('home')  # Redirect to detail page
+
+    return render(request, 'product/edit.html', {'form': form})
+
+
+@login_required
+def delete_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        return redirect('home')
+    return render(request, 'product/delete.html', {'product': product})
