@@ -119,59 +119,78 @@
                     <div class="text-center">
                         <h2>Latest comments</h2>
                     </div>
+                    {% for comment in comments %}
 
                     <div class="media card p-4 mt-2">
                         <div class="media-body">
-                          <h3 class="mt-0">John Doe</h3>
-                          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                          <h3 class="mt-0">{{ comment.name }} => {{ comment.created_at }}</h3>
+                          {{ comment.content }}
                         </div>
                     </div>
-
-                    <div class="media card p-4 mt-2">
-                        <div class="media-body">
-                          <h3 class="mt-0">John Doe</h3>
-                          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        </div>
-                    </div>
-
-                    <div class="media card p-4 mt-2">
-                        <div class="media-body">
-                          <h3 class="mt-0">John Doe</h3>
-                          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        </div>
+                    {% endfor %}
                     </div>
 
                 </div>
 
                 <div class="col-8 offset-2 mt-5">
                    
-                    <div class=" p-5">
-                        <div class="text-center">
-                            <h3>Add Comment</h3>
-                        </div>
-                    
-                    <form>
-                        <div class="form-group mb-3">
-                          <label for="formGroupExampleInput">Your name</label>
-                          <input type="text" class="form-control"  placeholder="Your name">
-                        </div>
-                        <div class="form-group mb-3">
-                          <label for="formGroupExampleInput2">Your email</label>
-                          <input type="text" class="form-control" placeholder="Your email">
-                        </div>
+                    <div class="p-5">
+    <div class="text-center">
+        <h3>Add Comment</h3>
+    </div>
 
-                        <div class="form-group mb-3">
-                            <label for="formGroupExampleInput2">Your comment</label>
-                           <textarea name="" class="form-control" id="" cols="30" rows="10"></textarea>
-                          </div>
+    <form method="post" action="{% url 'add_comment' product.id %}">
+        {% csrf_token %}
+        <!-- Rating Section -->
+        <div class="form-group mb-3">
+            <label>Your Rating</label>
+            <div class="rating d-flex flex-row-reverse justify-content-center">
+                <input type="radio" name="rating" id="star5" value="5"><label for="star5">&#9733;</label>
+                <input type="radio" name="rating" id="star4" value="4"><label for="star4">&#9733;</label>
+                <input type="radio" name="rating" id="star3" value="3"><label for="star3">&#9733;</label>
+                <input type="radio" name="rating" id="star2" value="2"><label for="star2">&#9733;</label>
+                <input type="radio" name="rating" id="star1" value="1"><label for="star1">&#9733;</label>
+            </div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="formGroupExampleInput">Your name</label>
+            <input type="text" name="name" class="form-control" placeholder="Your name">
+        </div>
+        <div class="form-group mb-3">
+            <label for="formGroupExampleInput2">Your email</label>
+            <input type="text" name="email" class="form-control" placeholder="Your email">
+        </div>
+        <div class="form-group mb-3">
+            <label for="formGroupExampleInput2">Your comment</label>
+            <textarea name="content" class="form-control" cols="30" rows="10"></textarea>
+        </div>
 
-                          <div class="form-group mb-3">
+        <div class="form-group mb-3">
+            <input type="submit" class="btn btn-success" value="Send">
+        </div>
+    </form>
+</div>
 
-                            <input type="text" class="btn btn-success" value="Send">
-                          </div>
-                      </form>
+<style>
+.rating input {
+    display: none;
+}
 
-                    </div>
+.rating label {
+    font-size: 2rem;
+    color: lightgray;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0 5px;
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+    color: gold;
+}
+</style>
+
                       
                 </div>
             </div>

@@ -1,7 +1,8 @@
-from os.path import defpath
+
 from decimal import Decimal
 
 from django.db import models
+
 # Create your models here.
 
 
@@ -29,6 +30,7 @@ class Product(BaseModel):
     discount = models.IntegerField(default=0)
     amount = models.PositiveIntegerField(default=1)
 
+
     def __str__(self):
         return self.name
 
@@ -44,3 +46,21 @@ class Order(BaseModel):
 
     def __str__(self):
         return f"{self.name} - {self.quantity}"
+
+
+class Comment(BaseModel):
+    class RatingChoice(models.IntegerChoices):
+        ONE = 1
+        TWO = 2
+        THREE = 3
+        FOUR = 4
+        FIVE = 5
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
+    content = models.TextField()
+    product = models.ForeignKey(Product, related_name="comments", on_delete=models.CASCADE, null = True, blank = True)
+    rating = models.IntegerField(choices=RatingChoice.choices, default=RatingChoice.THREE)
+
+    def __str__(self):
+        return f"{self.name} - {self.rating}"
+

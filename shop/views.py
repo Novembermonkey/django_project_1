@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import HttpResponse
 from django.contrib import messages
-from .forms import OrderForm, ProductForm
-from .models import Product, Category
+from django.db.models import Avg
+from .forms import OrderForm, ProductForm, CommentForm
+from .models import Product, Category, Comment
 from django.contrib.auth.decorators import login_required
+from decimal import Decimal
 
 
 # Create your views here.
@@ -19,9 +21,10 @@ def home(request, category_title=None):
 
     if search:
         products = products.filter(name__icontains=search)
-
+    products = products.annotate(rating = Avg('comments__rating')).order_by('-rating')
     context = {'products': products,
-               'categories': Category.objects.all()}
+               'categories': Category.objects.all(),
+               }
 
     return render(request, 'shop/home.html', context)
 
@@ -31,7 +34,8 @@ def product_detail(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
         context = {'product': product,
-                   'categories': Category.objects.all()}
+                   'categories': Category.objects.all(),
+                   'comments': product.comments.all().order_by('-id')}
         return render(request, 'shop/detail.html', context)
 
     except Product.DoesNotExist:
@@ -108,3 +112,19 @@ def delete_product(request, pk):
         product.delete()
         return redirect('home')
     return render(request, 'product/delete.html', {'product': product})
+
+def add_comment(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    form = CommentForm()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.product = product
+            comment.save()
+        else:
+            return 
+        return redirect('product_detail', pk)
+    return render(request, 'shop/detail.html', {'form': form})
+
+
