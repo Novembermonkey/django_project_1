@@ -5,14 +5,18 @@ from django.db.models import Avg
 from .forms import OrderForm, ProductForm, CommentForm
 from .models import Product, Category, Comment
 from django.contrib.auth.decorators import login_required
-from decimal import Decimal
+from .utils import filter_by_type
 
 
 # Create your views here.
 
+
+
 def home(request, category_title=None):
 
     search = request.GET.get('search')
+    filter_type = request.GET.get('filter', '')
+
     if category_title:
         category_id = Category.objects.get(title=category_title).id
         products = Product.objects.filter(category=category_id)
@@ -21,7 +25,10 @@ def home(request, category_title=None):
 
     if search:
         products = products.filter(name__icontains=search)
-    products = products.annotate(rating = Avg('comments__rating')).order_by('-rating')
+
+    products = products.annotate(avg_rating = Avg('comments__rating'))
+    products = filter_by_type(products, filter_type)
+
     context = {'products': products,
                'categories': Category.objects.all(),
                }
@@ -122,8 +129,9 @@ def add_comment(request, pk):
             comment = form.save(commit=False)
             comment.product = product
             comment.save()
+            messages.add_message(request, messages.SUCCESS,"Comment added successfully")
         else:
-            return 
+            messages.add_message(request, messages.ERROR, "Error occured")
         return redirect('product_detail', pk)
     return render(request, 'shop/detail.html', {'form': form})
 

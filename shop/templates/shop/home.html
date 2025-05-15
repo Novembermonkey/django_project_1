@@ -63,15 +63,15 @@
             </div>
             <div class="row">
                 <div class="col-1">
-                    <a class="btn btn-outline-dark mt-auto" href="#"> Expensive </a>
+                    <a class="btn btn-outline-dark mt-auto" href="?filter=expensive"> Expensive </a>
                 </div>
 
                 <div class="col-1">
-                    <a class="btn btn-outline-dark mt-auto" href="#"> Cheap </a>
+                    <a class="btn btn-outline-dark mt-auto" href="?filter=cheap"> Cheap </a>
                 </div>
 
                 <div class="col-1">
-                    <a class="btn btn-outline-dark mt-auto" href="#"> Likes </a>
+                    <a class="btn btn-outline-dark mt-auto" href="?filter=rating"> Ratings </a>
                 </div>
                 {%if user.is_authenticated%}
                     <div class="col-1">
@@ -107,7 +107,24 @@
                                     <!-- Product reviews-->
 
                                     <div class="d-flex justify-content-center small text-warning mb-2">
-                                        Rating => {{ product.rating }}
+
+                                            <div class="rating-display">
+                                            <h5 style="margin: 0; color: indigo;">Rating: {{ product.avg_rating }}</h5>
+                                                {% for i in "12345" %}
+                                                    {% if forloop.counter <= product.avg_rating %}
+                                                        <p style="color: gold;">&#9733;</p>  <!-- filled star -->
+                                                    {% else %}
+                                                        <p style="color: lightgray;">&#9733;</p>  <!-- empty star -->
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            <style>
+                                                .rating-display p {
+                                                    font-size: 2rem; /* You can adjust this to 3rem or more */
+                                                    display: inline;
+                                                    margin: 0;
+                                                    }
+                                            </style>
                                     </div>
 
                                     <!-- Product price-->
