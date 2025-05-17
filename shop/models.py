@@ -9,7 +9,7 @@ from django.db import models
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    my_order = models.PositiveIntegerField(default=0, null=True, blank=True)
     class Meta:
         abstract = True
 
@@ -20,6 +20,7 @@ class Category(BaseModel):
         return self.title
     class Meta:
         verbose_name_plural = 'Categories'
+        ordering = ['my_order']
 
 class Product(BaseModel):
     name = models.CharField(max_length=50)
@@ -29,6 +30,9 @@ class Product(BaseModel):
     image = models.ImageField(upload_to = 'products/')
     discount = models.IntegerField(default=0)
     amount = models.PositiveIntegerField(default=1)
+    class Meta:
+        verbose_name_plural = 'Products'
+        ordering = ['my_order']
 
 
     def __str__(self):
@@ -46,6 +50,8 @@ class Order(BaseModel):
 
     def __str__(self):
         return f"{self.name} - {self.quantity}"
+    class Meta:
+        ordering = ['my_order']
 
 
 class Comment(BaseModel):
@@ -63,4 +69,7 @@ class Comment(BaseModel):
 
     def __str__(self):
         return f"{self.name} - {self.rating}"
+
+    class Meta:
+        ordering = ['my_order']
 
