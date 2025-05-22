@@ -6,7 +6,16 @@ class LoginForm(forms.Form):
     email = forms.EmailField()
     password = forms.CharField()
 
+class RegisterForm(forms.Form):
+    pass
 
+
+
+
+
+
+
+#admin forms
 class CustomUserCreationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 

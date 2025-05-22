@@ -35,3 +35,6 @@ def logout_page(request):
     if request.method == 'POST':
         logout(request)
         return redirect('shop:index')
+
+def register_page(request):
+    return render(request,'users/register.html')
