@@ -150,16 +150,36 @@
                     
                     <form method="post" action="{% url 'shop:comment_create' product.id %}" >
                         {%csrf_token%}
-                        <div>
-                            <select id="rating" name="rating">
-                                <option value="">...</option>
-                                <option value="1">★☆☆☆☆ (1)</option>
-                                <option value="2">★★☆☆☆ (2)</option>
-                                <option value="3">★★★☆☆ (3)</option>
-                                <option value="4">★★★★☆ (4)</option>
-                                <option value="5">★★★★★ (5)</option>
-                              </select>
+                        <div class="form-group mb-3">
+                             <label>Your Rating</label>
+                            <div class="rating d-flex flex-row-reverse justify-content-end">
+                                <input type="radio" name="rating" id="star5" value="5"><label for="star5">&#9733;</label>
+                                <input type="radio" name="rating" id="star4" value="4"><label for="star4">&#9733;</label>
+                                <input type="radio" name="rating" id="star3" value="3"><label for="star3">&#9733;</label>
+                                <input type="radio" name="rating" id="star2" value="2"><label for="star2">&#9733;</label>
+                                <input type="radio" name="rating" id="star1" value="1"><label for="star1">&#9733;</label>
+                            </div>
                         </div>
+                        <style>
+                        .rating input {
+                            display: none;
+                        }
+
+                        .rating label {
+                            font-size: 2rem;
+                            color: lightgray;
+                            cursor: pointer;
+                            transition: color 0.2s;
+                            padding: 0 5px;
+                        }
+
+                        .rating input:checked ~ label,
+                        .rating label:hover,
+                        .rating label:hover ~ label {
+                            color: gold;
+                        }
+                        </style>
+                        
 
                         <div class="form-group mb-3">
                           <label for="formGroupExampleInput">Your name</label>

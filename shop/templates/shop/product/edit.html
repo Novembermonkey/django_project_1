@@ -1,0 +1,58 @@
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Item</title>
+    <style>
+        .form-field {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Item</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-field">
+            <label for="{{ form.name.id_for_label }}">Name</label>
+            {% render_field form.name class="form-control" placeholder="Enter name" %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {% render_field form.description class="form-control" rows="4" placeholder="Enter description" %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.amount.id_for_label }}">Amount</label>
+            {% render_field form.amount class="form-control" placeholder="Enter amount" %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.price.id_for_label }}">Price</label>
+            {% render_field form.price class="form-control" placeholder="Enter price" %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.image.id_for_label }}">Image</label>
+            {% render_field form.image class="form-control-file" %}
+        </div>
+
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+</html>
